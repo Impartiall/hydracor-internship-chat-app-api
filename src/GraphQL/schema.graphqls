@@ -1,0 +1,40 @@
+schema {
+    query: Query
+}
+
+type Query {
+    user(id: ID): User
+}
+
+type User {
+    id: ID!
+    username: String!
+    email: String!
+    isOnline: Boolean!
+    chats: [Chat!]!
+    serversJoined: [Server!]!
+    serversOwned: [Server!]!
+}
+
+type Message {
+    id: ID!
+    sentBy: User!
+    sentIn: Chat!
+    content: String!
+}
+
+type Chat {
+    id: ID!
+    name: String!
+    belongsTo: Server
+    sharedBy: [User!]
+    messages: [Message!]!
+}
+
+type Server {
+    id: ID!
+    name: String!
+    belongsTo: User!
+    users: [User!]!
+    chats: [Chat!]!
+}
