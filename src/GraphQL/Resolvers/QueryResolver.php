@@ -12,7 +12,7 @@ class QueryResolver
      * 
      * @return array|null The specified user
      */
-    public static function user($_, array $args, array $context)
+    public static function getUser($_, array $args, array $context)
     {
         return $context['db']->fetchAssociative(
             'SELECT * FROM users WHERE id = ?',
