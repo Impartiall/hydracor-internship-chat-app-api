@@ -3,38 +3,58 @@ schema {
 }
 
 type Query {
-    user(id: ID): User
+    user(id: ID!): User!
+    chat(id: ID!): Chat!
+    server(id: ID!): Server!
 }
 
 type User {
+    #=- Public -=#
     id: ID!
     username: String!
-    email: String!
     isOnline: Boolean!
-    chats: [Chat!]!
-    serversJoined: [Server!]!
-    serversOwned: [Server!]!
+    servers(isOwner: Boolean): [Server!]!
+    #=- Private -=#
+    email: String
+    chats: [Chat!]
+    messages(isOwner: Boolean, hasRead: Bool): [Message!]
 }
 
 type Message {
+    #=- Public -=#
     id: ID!
-    sentBy: User!
-    sentIn: Chat!
-    content: String!
+    #- Private -#
+    sender: User
+    content: String
+    # Either belongs to a Chat or a Channel
+    chat: Chat
+    channel: Channel
 }
 
 type Chat {
+    #=- Public -=#
     id: ID!
-    name: String!
-    belongsTo: Server
-    sharedBy: [User!]
-    messages: [Message!]!
+    #=- Private -=#
+    name: String
+    users: [User!]
+    messages: [Message!]
+}
+
+type Channel {
+    #=- Public -=#
+    id: ID!
+    #=- Private -=#
+    name: String
+    server: Server
+    messages: [Message!]
 }
 
 type Server {
+    #=- Public -=#
     id: ID!
     name: String!
-    belongsTo: User!
-    users: [User!]!
-    chats: [Chat!]!
+    owner: User!
+    #=- Private -=#
+    users: [User!]
+    channels: [Channel!]
 }
