@@ -3,7 +3,7 @@ schema {
 }
 
 type Query {
-    getUser(id: ID): User
+    user(id: ID): User
 }
 
 type User {
