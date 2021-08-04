@@ -22,7 +22,7 @@ return function (ContainerBuilder $containerBuilder) {
                 ],
                 'db' => [
                     'name'     => 'postgres', # Database name
-                    'host'     => 'localhost',
+                    'host'     => 'db',
                     'username' => 'postgres',        
                     'password' => getenv('POSTGRES_PASSWORD') ?: 'password',
                     'driver'   => 'pdo_pgsql' 

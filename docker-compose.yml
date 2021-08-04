@@ -6,7 +6,9 @@ volumes:
 
 services:
     slim:
-        image: php:7-alpine
+        build:
+            context: .
+            dockerfile: Dockerfile-slim
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 -t public
         environment:
@@ -25,6 +27,8 @@ services:
         volumes:
             - ./initdb:/docker-entrypoint-initdb.d
             - db-data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
 
 volumes:
     db-data:
