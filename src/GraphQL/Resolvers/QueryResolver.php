@@ -10,9 +10,9 @@ class QueryResolver
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return array|null The specified user
+     * @return array The specified user
      */
-    public static function user($_, array $args, array $context)
+    public static function user($_, array $args, array $context): array
     {
         return $context['db']->fetchAssociative(
             'SELECT * FROM users WHERE id = ?',
