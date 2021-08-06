@@ -2,6 +2,7 @@
 
 namespace App\Application\Controllers;
 
+use App\Auth\Authorization;
 use Doctrine\DBAL\Connection;
 use GraphQL\Executor\Executor;
 use GraphQL\GraphQL;
@@ -49,6 +50,7 @@ class GraphQLController
         // Pass database connection and logger to resolvers
         $context = [
             'db'      => $this->db,
+            'auth'    => new Authorization(null),
             'logger'  => $this->logger
         ];
 
