@@ -13,11 +13,11 @@ type User {
     id: ID!
     username: String!
     isOnline: Boolean!
-    servers(isOwner: Boolean): [Server!]!
+    servers: [Server!]!
     #=- Private -=#
     email: String
     chats: [Chat!]
-    messages(isSender: Boolean, hasRead: Boolean): [Message!]
+    messages: [Message!]
 }
 
 type Message {
