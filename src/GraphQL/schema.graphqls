@@ -17,7 +17,7 @@ type User {
     #=- Private -=#
     email: String
     chats: [Chat!]
-    messages(isOwner: Boolean, hasRead: Boolean): [Message!]
+    messages(isSender: Boolean, hasRead: Boolean): [Message!]
 }
 
 type Message {
