@@ -9,6 +9,15 @@ $resolvers = [
     'Query' => [
         'user' => [],
     ],
+    'User' => [
+        'id' => [],
+        'username' => [],
+        'isOnline' => [],
+        'servers' => [],
+        'email' => [],
+        'chats' => [],
+        'messages' => [],
+    ],
 ];
 
 /**
