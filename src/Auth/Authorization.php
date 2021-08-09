@@ -17,9 +17,9 @@ class Authorization
      * 
      * @param array|null The user array representing the authenticated user making the request
      */
-    public function __construct($requester)
+    public function __construct($user)
     {
-        $this->requester = $requester;
+        $this->requester = $user;
     }
 
     /**
@@ -33,6 +33,6 @@ class Authorization
      */
     public function canViewUser(int $userId): bool
     {
-        return $this->requester['id'] ?? null === $userId;
+        return ($this->requester['id'] ?? null) === $userId;
     }
 }
