@@ -54,5 +54,4 @@ function insertDefaultResolvers(array $resolvers): array
     return $resolvers;
 }
 
-// print_r(insertDefaultResolvers($resolvers));
 return insertDefaultResolvers($resolvers);
