@@ -2,7 +2,9 @@
 
 namespace App\Application\Controllers;
 
+use App\Application\Settings\SettingsInterface;
 use App\Auth\Authorization;
+use App\Auth\Authentication;
 use Doctrine\DBAL\Connection;
 use GraphQL\Executor\Executor;
 use GraphQL\GraphQL;
@@ -21,10 +23,16 @@ class GraphQLController
     protected $db;
     protected $logger;
 
-    public function __construct(Connection $connection, LoggerInterface $logger)
+    /**
+     * @var string $secret The secret key used for encoding and decoding JWTs
+     */
+    protected string $secret;
+
+    public function __construct(Connection $connection, LoggerInterface $logger, SettingsInterface $settings)
     {
         $this->db = $connection;
         $this->logger = $logger;
+        $this->secret = $settings->get('secret');
     }
 
     /**
@@ -41,6 +49,10 @@ class GraphQLController
         // Load schema from file
         $schema = BuildSchema::build(file_get_contents(dirname(__DIR__, 3) . '/src/GraphQL/schema.graphqls'));
 
+        // Get an authenticated user instance
+        $authentication = new Authentication($this->secret, $this->db);
+        $user = $authentication->getAuthenticatedUser($request);
+
         // Read data passed in request
         $input = $request->getParsedBody();
         $query = $input['query'];
@@ -50,7 +62,7 @@ class GraphQLController
         // Pass database connection and logger to resolvers
         $context = [
             'db'      => $this->db,
-            'auth'    => new Authorization(null),
+            'auth'    => new Authorization($user),
             'logger'  => $this->logger
         ];
 

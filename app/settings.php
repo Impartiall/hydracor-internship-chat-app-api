@@ -27,6 +27,7 @@ return function (ContainerBuilder $containerBuilder) {
                     'password' => getenv('POSTGRES_PASSWORD') ?: 'password',
                     'driver'   => 'pdo_pgsql' 
                 ],
+                'secret' => getenv('JWT_SECRET') ?: 'secret',
             ]);
         }
     ]);
