@@ -21,13 +21,16 @@ return function (ContainerBuilder $containerBuilder) {
                     'level' => Logger::DEBUG,
                 ],
                 'db' => [
-                    'name'     => 'postgres', # Database name
+                    'name'     => 'postgres', // Database name
                     'host'     => 'db',
                     'username' => 'postgres',        
                     'password' => getenv('POSTGRES_PASSWORD') ?: 'password',
                     'driver'   => 'pdo_pgsql' 
                 ],
-                'secret' => getenv('JWT_SECRET') ?: 'secret',
+                'jwt' => [
+                    'secret' => getenv('JWT_SECRET') ?: 'secret',
+                    'lifetime' => getenv('JWT_LIFETIME') ?: 600, // Default JWT lifetime is 10 minutes
+                ],
             ]);
         }
     ]);

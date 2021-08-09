@@ -32,7 +32,7 @@ class GraphQLController
     {
         $this->db = $connection;
         $this->logger = $logger;
-        $this->secret = $settings->get('secret');
+        $this->jwt = $settings->get('jwt');
     }
 
     /**
@@ -50,7 +50,7 @@ class GraphQLController
         $schema = BuildSchema::build(file_get_contents(dirname(__DIR__, 3) . '/src/GraphQL/schema.graphqls'));
 
         // Get an authenticated user instance
-        $authentication = new Authentication($this->secret, $this->db);
+        $authentication = new Authentication($this->jwt['secret'], $this->db);
         $user = $authentication->getAuthenticatedUser($request);
 
         // Read data passed in request
@@ -63,7 +63,8 @@ class GraphQLController
         $context = [
             'db'      => $this->db,
             'auth'    => new Authorization($user),
-            'logger'  => $this->logger
+            'logger'  => $this->logger,
+            'jwt' => $this->jwt,
         ];
 
         // Set the root value to a value of type array
