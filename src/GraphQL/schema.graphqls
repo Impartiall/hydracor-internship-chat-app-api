@@ -24,7 +24,7 @@ type User {
 type Message {
     #=- Public -=#
     id: ID!
-    #- Private -#
+    #=- Private -=#
     sender: User
     content: String
     # Either belongs to a Chat or a Channel
