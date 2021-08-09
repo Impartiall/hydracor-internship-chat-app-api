@@ -24,6 +24,38 @@ class QueryResolver
     }
 
     /**
+     * Get a chat by its ID
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The specified caht
+     */
+    public static function chat($_, array $args, array $context): array
+    {
+        return $context['db']->fetchAssociative(
+            'SELECT * FROM chats WHERE id = ?',
+            [$args['id']]
+        );
+    }
+
+    /**
+     * Get a server by its ID
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The specified server
+     */
+    public static function server($_, array $args, array $context): array
+    {
+        return $context['db']->fetchAssociative(
+            'SELECT * FROM servers WHERE id = ?',
+            [$args['id']]
+        );
+    }
+
+    /**
      * Validate a requester's credentials and return a JWT
      * 
      * If the credentials are not valid, null will be returned.
