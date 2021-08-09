@@ -6,6 +6,7 @@ type Query {
     user(id: ID!): User!
     chat(id: ID!): Chat!
     server(id: ID!): Server!
+    logIn(email: String, password: String): String
 }
 
 type User {

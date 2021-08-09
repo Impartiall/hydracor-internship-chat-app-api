@@ -8,6 +8,7 @@ namespace App\GraphQL;
 $resolvers = [
     'Query' => [
         'user' => [],
+        'logIn' => [],
     ],
     'User' => [
         'id' => [],
