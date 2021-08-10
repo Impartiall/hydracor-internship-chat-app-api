@@ -1,1 +1,2 @@
-docker exec -it --user postgres chat-app-api_db_1 sh
+#!/bin/sh
+docker exec -it --user postgres $(basename $PWD)_db_1 sh

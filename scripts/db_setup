@@ -1,1 +1,1 @@
-docker exec -it --user postgres chat-app-api_db_1 psql -f /var/lib/postgresql/scripts/schema.sql -f /var/lib/postgresql/scripts/mock_data.sql
+docker exec -it --user postgres $(basename $PWD)_db_1 psql -f /var/lib/postgresql/scripts/schema.sql -f /var/lib/postgresql/scripts/mock_data.sql
