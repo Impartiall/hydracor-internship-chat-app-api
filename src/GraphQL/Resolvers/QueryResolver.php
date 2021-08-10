@@ -70,17 +70,16 @@ class QueryResolver
      */
     public static function logIn($_, array $args, array $context)
     {
-        try {
-            $user = $context['db']->fetchAssociative(
-                'SELECT * FROM users WHERE email = ?',
-                [$args['email']]
-            );
-            if (password_verify($args['password'], $user['password'])) {
-                return Token::create($user['id'], $context['jwt']['secret'], time() + $context['jwt']['lifetime'], '');
-            } else {
-                return null;
-            }
-        } catch (Exception $__) {
+        $user = $context['db']->fetchAssociative(
+            'SELECT * FROM users WHERE email = ?',
+            [$args['email']]
+        );
+        if (password_verify($args['password'], $user['password'])) {
+            $secret = $context['jwt']['secret'];
+            $expiration = time() + $context['jwt']['lifetime'];
+            $issuer = 'localhost';
+            return Token::create($user['id'], $secret, $expiration, $issuer);
+        } else {
             return null;
         }
     }

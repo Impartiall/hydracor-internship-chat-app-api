@@ -28,7 +28,7 @@ return function (ContainerBuilder $containerBuilder) {
                     'driver'   => 'pdo_pgsql' 
                 ],
                 'jwt' => [
-                    'secret' => getenv('JWT_SECRET') ?: 'secret',
+                    'secret' => getenv('JWT_SECRET') ?: 'sec!ReT423*&',
                     'lifetime' => getenv('JWT_LIFETIME') ?: 600, // Default JWT lifetime is 10 minutes
                 ],
             ]);
