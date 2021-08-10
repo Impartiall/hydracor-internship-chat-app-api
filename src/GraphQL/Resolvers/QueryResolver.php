@@ -32,7 +32,7 @@ class QueryResolver
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return array The specified caht
+     * @return array The specified chat
      */
     public static function chat($_, array $args, array $context): array
     {
