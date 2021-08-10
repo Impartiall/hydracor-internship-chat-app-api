@@ -21,6 +21,12 @@ $resolvers = [
         'chats' => [],
         'messages' => [],
     ],
+    'Chat' => [
+        'id' => [],
+        'name' => [],
+        'users' => [],
+        'messages' => [],
+    ],
 ];
 
 /**
