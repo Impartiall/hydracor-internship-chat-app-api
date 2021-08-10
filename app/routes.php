@@ -14,7 +14,9 @@ return function (App $app) {
         return $response;
     });
     
-    $app->options('/{routes:.*}', function (Request $request, Response $response) {
+    $app->post('/graphql', \App\Application\Controllers\GraphQLController::class . ':index');
+
+    $app->options('/graphql', function (Request $request, Response $response) {
         // CORS Pre-Flight OPTIONS Request Handler
         return $response
             ->withStatus(200)
@@ -23,6 +25,4 @@ return function (App $app) {
             ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type')
             ->withHeader('Access-Control-Max-Age', '86400');
     });
-
-    $app->any('/graphql', \App\Application\Controllers\GraphQLController::class . ':index');
 };
