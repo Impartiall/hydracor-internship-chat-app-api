@@ -1,7 +1,7 @@
 \connect postgres;
 
-INSERT INTO users (username, email, password) VALUES ('user1', 'user1_email', 'user1_password');
-INSERT INTO users (username, email, password) VALUES ('user2', 'user2_email', 'user2_password');
+INSERT INTO users (username, email, password) VALUES ('user1', 'user1_email', '$2y$10$vwwm9M2bBvS/eb3drVsjTucVpcSr8oO8eC7y3noH2BQdKMAH.U2.q'); -- Password hashed from user1_password
+INSERT INTO users (username, email, password) VALUES ('user2', 'user2_email', '$2y$10$cFaSxsaN2qryvM0MwDs4FebPUcgM2Jnxmy3eMZa45XgBFsMilNQp.'); -- Password hashed from user2_password
 
 INSERT INTO servers (name, owner_id) VALUES ('server_of_user1', 1);
 INSERT INTO servers (name, owner_id) VALUES ('server_of_user2', 2);
