@@ -23,6 +23,16 @@ class Authorization
     }
 
     /**
+     * Accessor method for $this->requester
+     * 
+     * @return array|null The requester in this instance
+     */
+    public function getRequester()
+    {
+        return $this->requester;
+    }
+
+    /**
      * Validate whether a requester can view private properties on a user
      * 
      * This authorization requires that the requestor is the user being accessed
