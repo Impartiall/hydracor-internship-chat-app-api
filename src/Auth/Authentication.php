@@ -56,7 +56,7 @@ class Authentication
                 && Token::validateExpiration($token, $this->secret)
             ) {
                 $payload = Token::getPayload($token, $this->secret);
-                return $this->getUserById($payload['sub']);
+                return $this->getUserById($payload['user_id']);
             } else {
                 return null;
             }

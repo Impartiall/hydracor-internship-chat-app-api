@@ -11,6 +11,18 @@ use ReallySimpleJWT\Token;
 class QueryResolver
 {
     /**
+     * Get the current authenticated user
+     * 
+     * @param array $context The global context
+     * 
+     * @return array|null The current authenticated user
+     */
+    public static function me($_, $__, array $context)
+    {
+        return $context['auth']->getRequester();
+    }
+
+    /**
      * Get a user by their ID
      * 
      * @param array $args The arguments passed to the field
