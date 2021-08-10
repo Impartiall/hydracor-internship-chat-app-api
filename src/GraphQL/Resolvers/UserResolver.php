@@ -4,6 +4,9 @@ namespace App\GraphQL\Resolvers;
 
 use Doctrine\DBAL\Connection;
 
+/**
+ * A collection of resolver methods for the User type
+ */
 class UserResolver
 {
     /**

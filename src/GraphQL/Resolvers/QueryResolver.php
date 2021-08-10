@@ -5,6 +5,9 @@ namespace App\GraphQL\Resolvers;
 use Exception;
 use ReallySimpleJWT\Token;
 
+/**
+ * A collection of resolver methods for the Query type
+ */
 class QueryResolver
 {
     /**
