@@ -62,7 +62,7 @@ class GraphQLController
         // Pass database connection and logger to resolvers
         $context = [
             'db'      => $this->db,
-            'auth'    => new Authorization($user, $this->db),
+            'auth'    => new Authorization($user),
             'logger'  => $this->logger,
             'jwt' => $this->jwt,
         ];
