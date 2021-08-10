@@ -18,6 +18,11 @@ return function (App $app) {
     
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
         // CORS Pre-Flight OPTIONS Request Handler
-        return $response;
+        return $response
+            ->withStatus(200)
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:8081')
+            ->withHeader('Access-Control-Allow-Methods', 'POST')
+            ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            ->withHeader('Access-Control-Max-Age', '86400');
     });
 };
