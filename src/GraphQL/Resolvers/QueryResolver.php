@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Resolvers;
 
-use Exception;
+use App\Database\Records;
 use ReallySimpleJWT\Token;
 
 /**
@@ -32,10 +32,7 @@ class QueryResolver
      */
     public static function user($_, array $args, array $context): array
     {
-        return $context['db']->fetchAssociative(
-            'SELECT * FROM users WHERE id = ?',
-            [$args['id']]
-        );
+        return Records::selectById($context['db'], 'users', $args['id']);
     }
 
     /**
@@ -48,10 +45,8 @@ class QueryResolver
      */
     public static function chat($_, array $args, array $context): array
     {
-        return $context['db']->fetchAssociative(
-            'SELECT * FROM chats WHERE id = ?',
-            [$args['id']]
-        );
+        
+        return Records::selectById($context['db'], 'chats', $args['id']);
     }
 
     /**
@@ -64,10 +59,7 @@ class QueryResolver
      */
     public static function server($_, array $args, array $context): array
     {
-        return $context['db']->fetchAssociative(
-            'SELECT * FROM servers WHERE id = ?',
-            [$args['id']]
-        );
+        return Records::selectById($context['db'], 'servers', $args['id']);
     }
 
     /**
@@ -86,7 +78,7 @@ class QueryResolver
             'SELECT * FROM users WHERE email = ?',
             [$args['email']]
         );
-        if (password_verify($args['password'], $user['password'])) {
+        if ($user && password_verify($args['password'], $user['password'])) {
             $secret = $context['jwt']['secret'];
             $expiration = time() + $context['jwt']['lifetime'];
             $issuer = 'localhost';
