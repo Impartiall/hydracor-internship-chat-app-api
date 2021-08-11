@@ -106,7 +106,7 @@ class MutationResolver
         if (isset($userInput['email'])) {
             $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL) ?: null;
         }
-        if (isset($userInput['password'])) {
+        if (isset($userInput['password']) && strlen($userInput['password']) >= 7) {
             $password = password_hash($userInput['password'], PASSWORD_BCRYPT) ?: null;
         }
         return [
