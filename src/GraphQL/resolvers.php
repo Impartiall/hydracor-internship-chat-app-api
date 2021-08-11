@@ -13,6 +13,11 @@ $resolvers = [
         'server' => [],
         'logIn' => [],
     ],
+    'Mutation' => [
+        'createUser' => [],
+        'updateUser' => [],
+        'deleteUser' => [],
+    ],
     'User' => [
         'id' => [],
         'username' => [],
