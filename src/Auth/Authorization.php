@@ -41,7 +41,7 @@ class Authorization
      * 
      * @return bool Whether or not the user is authorized for this action
      */
-    public function canViewUser(int $userId): bool
+    public function isAuthForUser(int $userId): bool
     {
         return ($this->requester['id'] ?? null) === $userId;
     }
