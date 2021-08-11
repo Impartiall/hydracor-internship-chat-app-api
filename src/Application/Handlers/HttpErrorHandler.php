@@ -62,7 +62,9 @@ class HttpErrorHandler extends SlimErrorHandler
         $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($statusCode);
-        // $response->getBody()->write($encodedPayload);
+        if ($this->displayErrorDetails) {
+            $response->getBody()->write($encodedPayload);
+        }
 
         return $response->withHeader('Content-Type', 'application/json');
     }
