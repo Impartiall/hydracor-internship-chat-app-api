@@ -55,24 +55,24 @@ CREATE TABLE "servers_users" (
   "server_id" integer NOT NULL
 );
 
-ALTER TABLE "messages" ADD FOREIGN KEY ("sender_id") REFERENCES "users" ("id");
+ALTER TABLE "messages" ADD FOREIGN KEY ("sender_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "messages" ADD FOREIGN KEY ("chat_id") REFERENCES "chats" ("id");
+ALTER TABLE "messages" ADD FOREIGN KEY ("chat_id") REFERENCES "chats" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "messages_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "messages_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "messages_users" ADD FOREIGN KEY ("message_id") REFERENCES "messages" ("id");
+ALTER TABLE "messages_users" ADD FOREIGN KEY ("message_id") REFERENCES "messages" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "chats_users" ADD FOREIGN KEY ("chat_id") REFERENCES "chats" ("id");
+ALTER TABLE "chats_users" ADD FOREIGN KEY ("chat_id") REFERENCES "chats" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "messages" ADD FOREIGN KEY ("channel_id") REFERENCES "channels" ("id");
+ALTER TABLE "messages" ADD FOREIGN KEY ("channel_id") REFERENCES "channels" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "channels" ADD FOREIGN KEY ("server_id") REFERENCES "servers" ("id");
+ALTER TABLE "channels" ADD FOREIGN KEY ("server_id") REFERENCES "servers" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "chats_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "chats_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "servers" ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id");
+ALTER TABLE "servers" ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "servers_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "servers_users" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "servers_users" ADD FOREIGN KEY ("server_id") REFERENCES "servers" ("id");
+ALTER TABLE "servers_users" ADD FOREIGN KEY ("server_id") REFERENCES "servers" ("id") ON DELETE CASCADE;
