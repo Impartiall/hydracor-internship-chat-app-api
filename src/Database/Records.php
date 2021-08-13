@@ -116,9 +116,9 @@ class Records
      * 
      * @return bool True if the value is unique, false otherwise
      */
-    public static function isUnique(Connection $connection, string $table, string $column, mixed $value): array
+    public static function isUnique(Connection $connection, string $table, string $column, $value): bool
     {
-        return $connection->fetchOne(
+        return !$connection->fetchOne(
             "SELECT $column FROM $table WHERE $column = ?",
             [$value]
         );

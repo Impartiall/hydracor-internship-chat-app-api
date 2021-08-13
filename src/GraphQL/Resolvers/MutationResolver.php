@@ -28,7 +28,8 @@ class MutationResolver
      */
     public static function createUser($_, array $args, array $context): string
     {
-        $userInsert = Self::createUserInsert($args['input']);
+        $userInsert = Self::createUserInsert($context['db'], $args['input']);
+
         $user = Records::insert($context['db'], 'users', $userInsert);
 
         $secret = $context['jwt']['secret'];
@@ -51,7 +52,7 @@ class MutationResolver
     {
         $context['auth']->assert('isAuthForUser', [$args['id']]);
 
-        $userUpdate = Self::createUserUpdate($args['input']);
+        $userUpdate = Self::createUserUpdate($context['db'], $args['input']);
 
         return Records::update($context['db'], 'users', $args['id'], $userUpdate);
     }
@@ -77,13 +78,14 @@ class MutationResolver
      * Generate a user insert array with validated fields
      * and a hashed password
      * 
+     * @param Connection $connection A database connection
      * @param array $userInput The user input array
      * 
      * @throws InputException if a field is missing or invalid
      * 
      * @return array A validated insert array
      */
-    protected static function createUserInsert(array $userInput): array
+    protected static function createUserInsert(Connection $connection, array $userInput): array
     {
         if (isset($userInput['username'])) {
             if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
@@ -95,6 +97,9 @@ class MutationResolver
         if (isset($userInput['email'])) {
             $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
             if (!$email) throw new InputException('Field `email` must be a valid email.');
+
+            if (!Records::isUnique($connection, 'users', 'email', $email))
+                throw new InputException("The email `$email` is taken.");
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
@@ -121,13 +126,14 @@ class MutationResolver
      * Generate a user update array with validated fields
      * and a hashed password
      * 
+     * @param Connection $connection A database connection
      * @param array $userInput The user input array
      * 
      * @throws InputException if a field is set but invalid
      * 
      * @return array A validated update array
      */
-    protected static function createUserUpdate(array $userInput): array
+    protected static function createUserUpdate(Connection $connection, array $userInput): array
     {
         if (isset($userInput['username'])) {
             if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
@@ -139,6 +145,9 @@ class MutationResolver
         if (isset($userInput['email'])) {
             $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
             if (!$email) throw new InputException('Field `email` must be a valid email.');
+
+            if (!Records::isUnique($connection, 'users', 'email', $email))
+                throw new InputException("The email `$email` is taken.");
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
