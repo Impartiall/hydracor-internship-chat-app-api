@@ -79,7 +79,7 @@ class UserResolver
      */
     public static function email(array $user, $_, $context)
     {
-        if (!$context['auth']->isAuthForUser($user['id'])) return null;
+        $context['auth']->assert('isAuthForUser', [$user['id']]);
 
         return $user['email'];
     }
@@ -97,7 +97,7 @@ class UserResolver
      */
     public static function chats(array $user, $_, array $context)
     {
-        if (!$context['auth']->isAuthForUser($user['id'])) return null;
+        $context['auth']->assert('isAuthForUser', [$user['id']]);
 
         $chatIds = $context['db']->fetchFirstColumn(
             'SELECT chat_id FROM chats_users WHERE user_id = ?',
@@ -123,7 +123,7 @@ class UserResolver
      */
     public static function messages(array $user, $_, array $context)
     {
-        if (!$context['auth']->isAuthForUser($user['id'])) return null;
+        $context['auth']->assert('isAuthForUser', [$user['id']]);
 
         $messageIds = $context['db']->fetchFirstColumn(
             'SELECT message_id FROM messages_users WHERE user_id = ?',

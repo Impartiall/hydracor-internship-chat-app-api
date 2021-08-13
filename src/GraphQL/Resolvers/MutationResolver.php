@@ -3,10 +3,15 @@
 namespace App\GraphQL\Resolvers;
 
 use App\Database\Records;
+use App\Exceptions\ClientSafeException;
+use App\Exceptions\InputException;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Psr\Log\NullLogger;
 use ReallySimpleJWT\Token;
+
+define('USERNAME_MIN_LENGTH', 1);
+define('PASSWORD_MIN_LENGTH', 7);
 
 /**
  * A collection of resolver methods for the Mutation type
@@ -24,10 +29,8 @@ class MutationResolver
     public static function createUser($_, array $args, array $context)
     {
         $userInsert = Self::createUserInsert($args['input']);
-        if (is_null($userInsert)) {
-            return null;
-        }
         $user = Records::insert($context['db'], 'users', $userInsert);
+
         $secret = $context['jwt']['secret'];
         $expiration = time() + $context['jwt']['lifetime'];
         $issuer = 'localhost';
@@ -42,16 +45,14 @@ class MutationResolver
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return array|null The updated user, or null if the mutation fails
+     * @return array The updated user
      */
     public static function updateUser($_, array $args, array $context)
     {
-        if (!$context['auth']->isAuthForUser($args['id'])) return null;
+        $context['auth']->assert('isAuthForUser', [$args['id']]);
 
         $userUpdate = Self::createUserUpdate($args['input']);
-        if (is_null($userUpdate)) {
-            return null;
-        }
+
         return Records::update($context['db'], 'users', $args['id'], $userUpdate);
     }
 
@@ -63,11 +64,11 @@ class MutationResolver
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return array|null The deleted user, or null if the mutation fails
+     * @return array The deleted user
      */
     public static function deleteUser($_, array $args, array $context)
     {
-        if (!$context['auth']->isAuthForUser($args['id'])) return null;
+        $context['auth']->assert('isAuthForUser', [$args['id']]);
 
         return Records::delete($context['db'], 'users', $args['id']);
     }
@@ -78,20 +79,42 @@ class MutationResolver
      * 
      * @param array $userInput The user input array
      * 
-     * @return array|null A validated insert array, or null if the method fails
+     * @throws InputException if a field is missing or invalid
+     * 
+     * @return array A validated insert array
      */
-    protected static function createUserInsert(array $userInput)
+    protected static function createUserInsert(array $userInput): array
     {
-        $userInsert = Self::createUserUpdate($userInput);
-
-        // Return null unless all required fields are set
-        foreach (['username', 'email', 'password'] as $field) {
-            if (is_null($userInsert[$field])) {
-                return null;
+        if (isset($userInput['username'])) {
+            if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
+                $username = $userInput['username'];
+            } else {
+                throw new InputException('Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
+            }
+        }
+        if (isset($userInput['email'])) {
+            $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
+            if (!$email) throw new InputException('Field `email` must be a valid email.');
+        }
+        if (isset($userInput['password'])) {
+            if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
+                $password = password_hash($userInput['password'], PASSWORD_BCRYPT);
+                if (!$password) throw new Exception('Failed to hash password');
+            } else {
+                throw new InputException('Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
             }
         }
 
-        return $userInsert;
+        $insertArray = [
+            'username' => $username ?? null,
+            'email' => $email ?? null,
+            'password' => $password ?? null,
+        ];
+        foreach (['username', 'email', 'password'] as $field) {
+            if (is_null($insertArray[$field])) throw new InputException("Field `$field` must be set.");
+        }
+
+        return $insertArray;
     }
 
     /**
@@ -100,23 +123,40 @@ class MutationResolver
      * 
      * @param array $userInput The user input array
      * 
+     * @throws InputException if a field is set but invalid
+     * 
      * @return array A validated update array
      */
     protected static function createUserUpdate(array $userInput): array
     {
-        if (isset($userInput['username']) && strlen($userInput['username']) >= 1) {
-            $username = $userInput['username'];
+        if (isset($userInput['username'])) {
+            if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
+                $username = $userInput['username'];
+            } else {
+                throw new InputException('Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
+            }
         }
         if (isset($userInput['email'])) {
-            $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL) ?: null;
+            $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
+            if (!$email) throw new InputException('Field `email` must be a valid email.');
         }
-        if (isset($userInput['password']) && strlen($userInput['password']) >= 7) {
-            $password = password_hash($userInput['password'], PASSWORD_BCRYPT) ?: null;
+        if (isset($userInput['password'])) {
+            if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
+                $password = password_hash($userInput['password'], PASSWORD_BCRYPT);
+                if (!$password) throw new Exception('Failed to hash password');
+            } else {
+                throw new InputException('Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
+            }
         }
-        return [
+
+        $userUpdate = [
             'username' => $username ?? null,
             'email' => $email ?? null,
             'password' => $password ?? null,
         ];
+        if (is_null($userUpdate['username']) && is_null($userUpdate['email']) && is_null($userUpdate['password']))
+            throw new InputException('At least one update field must not be null');
+
+        return $userUpdate;
     }
 }

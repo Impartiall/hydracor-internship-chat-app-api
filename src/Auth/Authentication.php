@@ -2,6 +2,8 @@
 
 namespace App\Auth;
 
+use App\Database\Records;
+use App\Exceptions\AuthenticationException;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Slim\Psr7\Request;
@@ -38,31 +40,28 @@ class Authentication
      * Return an authenticated user array based on a request
      * 
      * If the request has a JWT and the JWT validates to an existing user,
-     * the array modeling that user will be returned. If any step fails,
-     * null will be returned.
+     * the array modeling that user will be returned. If the Authorization
+     * header is not present, null will be returned.
      * 
      * @param Request $request The incoming request to read from
      * 
-     * @return array|null The authenticated user
+     * @return array|null The authenticated user, or null if there is no Authorization header
      */
     public function getAuthenticatedUser(Request $request)
     {
-        try {
-            $authHeader = $request->getHeaderLine('Authorization', '');
-            $token = $this->getTokenFromHeader($authHeader);
-            if (
-                $token
-                && Token::validate($token, $this->secret)
-                && Token::validateExpiration($token, $this->secret)
-            ) {
-                $payload = Token::getPayload($token, $this->secret);
-                return $this->getUserById($payload['user_id']);
-            } else {
-                return null;
-            }
-        } catch (Exception $e) {
-            return $e;
-        }
+        $authHeader = $request->getHeaderLine('Authorization', '');
+        $token = $this->getTokenFromHeader($authHeader);
+
+        if (!$token) return null;
+
+        if (!Token::validate($token, $this->secret))
+            throw new AuthenticationException('Invalid JWT.');
+
+        if (!Token::validateExpiration($token, $this->secret))
+            throw new AuthenticationException('JWT is expired.');
+
+        $payload = Token::getPayload($token, $this->secret);
+        return Records::selectById($this->connection, 'users', $payload['user_id']);
     }
 
     /**
@@ -86,20 +85,5 @@ class Authentication
         } else {
             return null;
         }
-    }
-
-    /**
-     * Retrieve a user from the database by their ID
-     * 
-     * @param int $id The ID of the user
-     * 
-     * @return array The array modeling the user
-     */
-    protected function getUserById(int $id)
-    {
-        return $this->connection->fetchAssociative(
-            'SELECT * FROM users WHERE id = ?',
-            [$id]
-        );
     }
 }
