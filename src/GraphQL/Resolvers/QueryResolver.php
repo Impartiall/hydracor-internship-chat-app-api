@@ -3,6 +3,8 @@
 namespace App\GraphQL\Resolvers;
 
 use App\Database\Records;
+use App\Exceptions\AuthenticationException;
+use Exception;
 use ReallySimpleJWT\Token;
 
 /**
@@ -65,12 +67,12 @@ class QueryResolver
     /**
      * Validate a requester's credentials and return a JWT
      * 
-     * If the credentials are not valid, null will be returned.
-     * 
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return array|null A JWT
+     * @throws AuthenticationException if credentials are invalid
+     * 
+     * @return array A JWT
      */
     public static function logIn($_, array $args, array $context)
     {
@@ -84,7 +86,7 @@ class QueryResolver
             $issuer = 'localhost';
             return Token::create($user['id'], $secret, $expiration, $issuer);
         } else {
-            return null;
+            throw new AuthenticationException('Email or password is incorrect.');
         }
     }
 }
