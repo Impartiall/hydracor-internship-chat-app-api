@@ -24,9 +24,9 @@ class MutationResolver
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
-     * @return string|null A JWT authorizing the created user, or null if the mutation fails
+     * @return string A JWT authorizing the created user
      */
-    public static function createUser($_, array $args, array $context)
+    public static function createUser($_, array $args, array $context): string
     {
         $userInsert = Self::createUserInsert($args['input']);
         $user = Records::insert($context['db'], 'users', $userInsert);
