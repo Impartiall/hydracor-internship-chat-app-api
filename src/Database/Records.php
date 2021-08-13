@@ -47,7 +47,7 @@ class Records
     {
         try {
             return $connection->fetchAssociative(
-                'SELECT * FROM ' . $table . ' WHERE id = ?',
+                "SELECT * FROM $table WHERE id = ?",
                 [$id]
             );
         } catch (Exception $_) {
@@ -104,5 +104,23 @@ class Records
             throw new DatabaseException('Failed to delete record.');
         }
         return $record;
+    }
+
+    /**
+     * Check that a value does not exist in any row in a given column of a given table
+     * 
+     * @param Connection $connection A database connection
+     * @param string $table The table in which the record is located
+     * @param string $column The column to search
+     * @param mixed $value The value to search for
+     * 
+     * @return bool True if the value is unique, false otherwise
+     */
+    public static function isUnique(Connection $connection, string $table, string $column, mixed $value): array
+    {
+        return $connection->fetchOne(
+            "SELECT $column FROM $table WHERE $column = ?",
+            [$value]
+        );
     }
 }
