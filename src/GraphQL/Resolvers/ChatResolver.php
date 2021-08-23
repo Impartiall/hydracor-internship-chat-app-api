@@ -25,16 +25,16 @@ class ChatResolver
      * Get a chat's name
      * 
      * Requires that the requester is authorized
-     * as a member of the chat
+     * to view the chat.
      * 
      * @param array $chat The chat being accessed
      * @param array $context The global context
      * 
-     * @return array|null The chat's name
+     * @return string The chat's name
      */
-    public static function name(array $chat, $_, array $context)
+    public static function name(array $chat, $_, array $context): string
     {
-        if (!$context['auth']->canViewChat($chat['id'])) return null;
+        $context['auth']->assert('canViewChat', [$chat['id']]);
 
         return $chat['name'];
     }
@@ -43,16 +43,16 @@ class ChatResolver
      * Get all the members of a chat
      * 
      * Requires that the requester is authorized
-     * as a member of the chat
+     * to view the chat.
      * 
      * @param array $chat The chat being accessed
      * @param array $context The global context
      * 
-     * @return array|null The chat's members
+     * @return array The chat's members
      */
-    public static function users(array $chat, $_, array $context)
+    public static function users(array $chat, $_, array $context): array
     {
-        if (!$context['auth']->canViewChat($chat['id'])) return null;
+        $context['auth']->assert('canViewChat', [$chat['id']]);
 
         $userIds = $context['db']->fetchFirstColumn(
             'SELECT user_id FROM chats_users WHERE chat_id = ?',
@@ -69,16 +69,16 @@ class ChatResolver
      * Get all the messages sent in a chat
      * 
      * Requires that the requester is authorized
-     * as a member of the chat
+     * to view the chat.
      * 
      * @param array $chat The chat being accessed
      * @param array $context The global context
      * 
-     * @return array|null The chat's messages
+     * @return array The chat's messages
      */
-    public static function messages(array $chat, $_, array $context)
+    public static function messages(array $chat, $_, array $context): array
     {
-        if (!$context['auth']->canViewChat($chat['id'])) return null;
+        $context['auth']->assert('canViewChat', [$chat['id']]);
 
         return $context['db']->fetchAllAssociative(
             'SELECT * FROM messages WHERE chat_id = ?',

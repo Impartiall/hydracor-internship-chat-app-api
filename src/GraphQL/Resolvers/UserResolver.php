@@ -69,17 +69,17 @@ class UserResolver
     /**
      * Get a user's email
      * 
-     * This operation requires that the requester is
-     * authorized as the user being accessed.
+     * Requires that the requester is
+     * authorized to view the user.
      * 
      * @param array $user The user being accessed
      * @param array $context The global context
      * 
-     * @return string|null The user's email
+     * @return string The user's email
      */
-    public static function email(array $user, $_, $context)
+    public static function email(array $user, $_, $context): string
     {
-        $context['auth']->assert('isAuthForUser', [$user['id']]);
+        $context['auth']->assert('canViewUser', [$user['id']]);
 
         return $user['email'];
     }
@@ -87,17 +87,17 @@ class UserResolver
     /**
      * Get a list of chats the user is a member of
      * 
-     * This operation requires that the requester is
-     * authorized as the user being accessed.
+     * Requires that the requester is
+     * authorized to view the user.
      * 
      * @param array $user The user being accessed
      * @param array $context The global context
      * 
-     * @return array|null Chats the user is a member of
+     * @return array Chats the user is a member of
      */
-    public static function chats(array $user, $_, array $context)
+    public static function chats(array $user, $_, array $context): array
     {
-        $context['auth']->assert('isAuthForUser', [$user['id']]);
+        $context['auth']->assert('canViewUser', [$user['id']]);
 
         $chatIds = $context['db']->fetchFirstColumn(
             'SELECT chat_id FROM chats_users WHERE user_id = ?',
@@ -113,17 +113,17 @@ class UserResolver
     /**
      * Get a list of messages the user has sent or received
      * 
-     * This operation requires that the requester is
-     * authorized as the user being accessed.
+     * Requires that the requester is
+     * authorized to view the user.
      * 
      * @param array $user The user being accessed
      * @param array $context The global context
      * 
-     * @return array|null Messages the user has sent or received
+     * @return array Messages the user has sent or received
      */
-    public static function messages(array $user, $_, array $context)
+    public static function messages(array $user, $_, array $context): array
     {
-        $context['auth']->assert('isAuthForUser', [$user['id']]);
+        $context['auth']->assert('canViewUser', [$user['id']]);
 
         $messageIds = $context['db']->fetchFirstColumn(
             'SELECT message_id FROM messages_users WHERE user_id = ?',

@@ -41,16 +41,17 @@ class MutationResolver
     /**
      * Update a user by their ID
      * 
-     * Requires user authorization.
+     * Requires that the requester is authorized
+     * to edit the user.
      * 
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
      * @return array The updated user
      */
-    public static function updateUser($_, array $args, array $context)
+    public static function updateUser($_, array $args, array $context): array
     {
-        $context['auth']->assert('isAuthForUser', [$args['id']]);
+        $context['auth']->assert('canEditUser', [$args['id']]);
 
         $userUpdate = Self::createUserUpdate($context['db'], $args['input']);
 
@@ -60,16 +61,17 @@ class MutationResolver
     /**
      * Delete a user by their ID
      * 
-     * Requires user authorization.
+     * Requires that the requester is authorized
+     * to edit the user.
      * 
      * @param array $args The arguments passed to the field
      * @param array $context The global context
      * 
      * @return array The deleted user
      */
-    public static function deleteUser($_, array $args, array $context)
+    public static function deleteUser($_, array $args, array $context): array
     {
-        $context['auth']->assert('isAuthForUser', [$args['id']]);
+        $context['auth']->assert('canEditUser', [$args['id']]);
 
         return Records::delete($context['db'], 'users', $args['id']);
     }

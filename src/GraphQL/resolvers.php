@@ -27,6 +27,13 @@ $resolvers = [
         'chats' => [],
         'messages' => [],
     ],
+    'Server' => [
+        'id' => [],
+        'name' => [],
+        'owner' => [],
+        'users' => [],
+        'channels' => [],
+    ],
     'Chat' => [
         'id' => [],
         'name' => [],

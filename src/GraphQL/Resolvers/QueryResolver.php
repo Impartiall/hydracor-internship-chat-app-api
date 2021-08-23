@@ -72,9 +72,9 @@ class QueryResolver
      * 
      * @throws AuthenticationException if credentials are invalid
      * 
-     * @return array A JWT
+     * @return string A JWT
      */
-    public static function logIn($_, array $args, array $context)
+    public static function logIn($_, array $args, array $context): string
     {
         $user = $context['db']->fetchAssociative(
             'SELECT * FROM users WHERE email = ?',
