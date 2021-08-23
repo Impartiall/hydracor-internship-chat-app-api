@@ -11,9 +11,11 @@ INSERT INTO servers_users (user_id, server_id) VALUES (1, 2);
 INSERT INTO servers_users (user_id, server_id) VALUES (2, 2);
 
 INSERT INTO chats (name) VALUES ('chat1');
+INSERT INTO chats (name) VALUES ('chat2');
 
 INSERT INTO chats_users (chat_id, user_id) VALUES (1, 1);
 INSERT INTO chats_users (chat_id, user_id) VALUES (1, 2);
+INSERT INTO chats_users (chat_id, user_id) VALUES (2, 2);
 
 INSERT INTO messages (sender_id, content, chat_id) VALUES (1, 'message1_content', 1);
 
