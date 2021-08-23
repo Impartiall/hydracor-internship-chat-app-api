@@ -56,6 +56,62 @@ class Records
     }
 
     /**
+     * Get child records from a parent record's ID
+     * 
+     * @param Connection $connection A database connection
+     * @param string $table The table in which the child records are located
+     * @param string $fk The name of the foreign key referencing the parent table
+     * @param int $id The ID of the parent record
+     * 
+     * @throws DatabaseException if the query fails
+     * 
+     * @return array The child records of the parent 
+     */
+    public static function selectMany(Connection $connection, string $table, string $fk, int $id)
+    {
+        try {
+            return $connection->fetchAllAssociative(
+                "SELECT * FROM $table WHERE $fk = ?",
+                [$id],
+                [Connection::PARAM_INT_ARRAY]
+            );
+        } catch (Exception $_) {
+            throw new DatabaseException('Failed to read members.');
+        }
+    }
+
+    /**
+     * Get child records from a parent record's ID through a join table
+     * 
+     * @param Connection $connection A database connection
+     * @param string $table The table in which the child records are located
+     * @param string $child_fk The name of the foreign key referencing the child table
+     * @param string $joinTable The join table to use
+     * @param string $parent_fk The name of the foreign key referencing the parent table
+     * @param int $id The ID of the parent record
+     * 
+     * @throws DatabaseException if the query fails
+     * 
+     * @return array The child records of the parent 
+     */
+    public static function selectManyFromJoin(Connection $connection, string $table, string $child_fk, string $joinTable, string $parent_fk, int $id)
+    {
+        try {
+            $recordIds = $connection->fetchFirstColumn(
+                "SELECT $child_fk FROM $joinTable WHERE $parent_fk = ?",
+                [$id],
+            );
+            return $connection->fetchAllAssociative(
+                "SELECT * FROM $table WHERE id IN (?)",
+                [$recordIds],
+                [Connection::PARAM_INT_ARRAY]
+            );
+        } catch (Exception $_) {
+            throw new DatabaseException('Failed to read members.');
+        }
+    }
+
+    /**
      * Update a record by its ID
      * 
      * If a field on the update array is null,
@@ -121,6 +177,26 @@ class Records
         return !$connection->fetchOne(
             "SELECT $column FROM $table WHERE $column = ?",
             [$value]
+        );
+    }
+
+    /**
+     * Check that a relationship between records exists in a join table
+     * 
+     * @param Connection $connection A database connection
+     * @param string $joinTable The join table to use
+     * @param string $fk1 The name of the foreign key referencing one table
+     * @param int $id1 The ID of one record
+     * @param string $fk2 The name of the foreign key referencing another table
+     * @param int $id2 The ID of another record
+     * 
+     * @return bool True if the the relationship exists, false otherwise
+     */
+    public static function doesRelationshipExist(Connection $connection, string $joinTable, string $fk1, int $id1, string $fk2, int $id2): bool
+    {
+        return !!$connection->fetchOne(
+            "SELECT id FROM $joinTable WHERE $fk1 = ? AND $fk2 = ?",
+            [$id1, $id2]
         );
     }
 }
