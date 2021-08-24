@@ -7,7 +7,7 @@ use GraphQL\Error\ClientAware;
 /**
  * A client safe exception for client input errors
  */
-class InputException extends ClientSafeException implements ClientAware
+class InputException extends ClientSafeException
 {
     public function getCategory(): string
     {

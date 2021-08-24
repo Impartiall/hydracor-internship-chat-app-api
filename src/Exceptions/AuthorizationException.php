@@ -7,7 +7,7 @@ use GraphQL\Error\ClientAware;
 /**
  * A client safe exception for authorization errors
  */
-class AuthorizationException extends ClientSafeException implements ClientAware
+class AuthorizationException extends ClientSafeException
 {
     public function getCategory(): string
     {

@@ -7,7 +7,7 @@ use GraphQL\Error\ClientAware;
 /**
  * A client safe exception for JWT authentication errors
  */
-class AuthenticationException extends ClientSafeException implements ClientAware
+class AuthenticationException extends ClientSafeException
 {
     public function getCategory(): string
     {

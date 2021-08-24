@@ -5,6 +5,7 @@ namespace App\Application\Controllers;
 use App\Application\Settings\SettingsInterface;
 use App\Auth\Authorization;
 use App\Auth\Authentication;
+use App\Exceptions\ClientSafeException;
 use Doctrine\DBAL\Connection;
 use GraphQL\Executor\Executor;
 use GraphQL\GraphQL;
@@ -14,6 +15,11 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Exception;
+use GraphQL\Error\Error;
+use GraphQL\Error\FormattedError;
+
+include_once(dirname(__DIR__, 3) . '/src/Exceptions/ClientSafeException.php');
+include_once(dirname(__DIR__, 3) . '/src/Exceptions/errorCodes.php');
 
 /**
  * A controller to handle GraphQL API requests
@@ -70,7 +76,19 @@ class GraphQLController
         // Set the root value to a value of type array
         $rootValue = [];
 
-        $result = GraphQL::executeQuery($schema, $query, $rootValue, $context, $variables);
+        // Use error code in error format
+        $errorFormatter = function(Error $error) {
+            $formattedError = FormattedError::createFromException($error);
+            $components = explode(ERROR_CODE_MESSAGE_SEPARATOR, $error->getMessage());
+            if (isset($components[1]) && $error->isClientSafe()) {
+                $formattedError['message'] = $components[1];
+                $formattedError['code'] = $components[0];
+            }
+            return $formattedError;
+        };
+
+        $result = GraphQL::executeQuery($schema, $query, $rootValue, $context, $variables)
+            ->setErrorFormatter($errorFormatter);
 
         // Generate response from query result
         $response->getBody()->write(json_encode($result));
