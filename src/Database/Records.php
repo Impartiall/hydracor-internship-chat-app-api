@@ -2,7 +2,6 @@
 
 namespace App\Database;
 
-use App\Exceptions\DatabaseException;
 use Doctrine\DBAL\Connection;
 use Exception;
 
@@ -18,7 +17,7 @@ class Records
      * @param string $table The table in which the record is to be created
      * @param array $record A map of the fields on the record to insert
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The created record
      */
@@ -27,7 +26,7 @@ class Records
         try {
             $connection->insert($table, $record);
         } catch (Exception $_) {
-            throw new DatabaseException('Failed to insert record.');
+            throw new Exception('Failed to insert record.');
         }
         return Self::selectById($connection, $table, $connection->lastInsertId());
     }
@@ -39,7 +38,7 @@ class Records
      * @param string $table The table in which the record is located
      * @param int $id The ID of the record
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The specified record 
      */
@@ -51,7 +50,7 @@ class Records
                 [$id]
             );
         } catch (Exception $_) {
-            throw new DatabaseException('Record does not exist.');
+            throw new Exception('Record does not exist.');
         }
     }
 
@@ -63,7 +62,7 @@ class Records
      * @param string $fk The name of the foreign key referencing the parent table
      * @param int $id The ID of the parent record
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The child records of the parent 
      */
@@ -76,7 +75,7 @@ class Records
                 [Connection::PARAM_INT_ARRAY]
             );
         } catch (Exception $_) {
-            throw new DatabaseException('Failed to read members.');
+            throw new Exception('Failed to read members.');
         }
     }
 
@@ -90,7 +89,7 @@ class Records
      * @param string $parent_fk The name of the foreign key referencing the parent table
      * @param int $id The ID of the parent record
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The child records of the parent 
      */
@@ -107,7 +106,7 @@ class Records
                 [Connection::PARAM_INT_ARRAY]
             );
         } catch (Exception $_) {
-            throw new DatabaseException('Failed to read members.');
+            throw new Exception('Failed to read members.');
         }
     }
 
@@ -122,7 +121,7 @@ class Records
      * @param int $recordId The record's ID
      * @param array $replacements A map of the fields on the record to update
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The updated record
      */
@@ -134,7 +133,7 @@ class Records
         try {
             $connection->update($table, $replacements, ['id' => $recordId]);
         } catch (Exception $_) {
-            throw new DatabaseException('Failed to update record.');
+            throw new Exception('Failed to update record.');
         }
         return Self::selectById($connection, $table, $recordId);
     }
@@ -146,7 +145,7 @@ class Records
      * @param string $table The table in which the record is located
      * @param int $recordId The record's ID
      * 
-     * @throws DatabaseException if the query fails
+     * @throws Exception if the query fails
      * 
      * @return array The deleted record
      */
@@ -157,7 +156,7 @@ class Records
         try {
             $connection->delete($table, ['id' => $recordId]);
         } catch (Exception $_) {
-            throw new DatabaseException('Failed to delete record.');
+            throw new Exception('Failed to delete record.');
         }
         return $record;
     }

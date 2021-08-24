@@ -83,6 +83,8 @@ class GraphQLController
             if (isset($components[1]) && $error->isClientSafe()) {
                 $formattedError['message'] = $components[1];
                 $formattedError['code'] = $components[0];
+            } else {
+                $formattedError['code'] = INTERNAL;
             }
             return $formattedError;
         };

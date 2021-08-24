@@ -93,22 +93,22 @@ class MutationResolver
             if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
                 $username = $userInput['username'];
             } else {
-                throw new InputException('Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
+                throw new InputException(FIELD_INVALID, 'Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
             }
         }
         if (isset($userInput['email'])) {
             $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
-            if (!$email) throw new InputException('Field `email` must be a valid email.');
+            if (!$email) throw new InputException(FIELD_INVALID, 'Field `email` must be a valid email.');
 
             if (!Records::isUnique($connection, 'users', 'email', $email))
-                throw new InputException("The email `$email` is taken.");
+                throw new InputException(EMAIL_TAKEN, "The email `$email` is taken.");
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
                 $password = password_hash($userInput['password'], PASSWORD_BCRYPT);
                 if (!$password) throw new Exception('Failed to hash password');
             } else {
-                throw new InputException('Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
+                throw new InputException(FIELD_INVALID, 'Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
             }
         }
 
@@ -118,7 +118,7 @@ class MutationResolver
             'password' => $password ?? null,
         ];
         foreach (['username', 'email', 'password'] as $field) {
-            if (is_null($insertArray[$field])) throw new InputException("Field `$field` must be set.");
+            if (is_null($insertArray[$field])) throw new InputException(FIELD_MISSING, "Field `$field` must be set.");
         }
 
         return $insertArray;
@@ -141,22 +141,22 @@ class MutationResolver
             if (strlen($userInput['username']) >= USERNAME_MIN_LENGTH) {
                 $username = $userInput['username'];
             } else {
-                throw new InputException('Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
+                throw new InputException(FIELD_INVALID, 'Field `username` must be at least ' . USERNAME_MIN_LENGTH . ' character(s) long.');
             }
         }
         if (isset($userInput['email'])) {
             $email = filter_var($userInput['email'], FILTER_VALIDATE_EMAIL);
-            if (!$email) throw new InputException('Field `email` must be a valid email.');
+            if (!$email) throw new InputException(FIELD_INVALID, 'Field `email` must be a valid email.');
 
             if (!Records::isUnique($connection, 'users', 'email', $email))
-                throw new InputException("The email `$email` is taken.");
+                throw new InputException(EMAIL_TAKEN, "The email `$email` is taken.");
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
                 $password = password_hash($userInput['password'], PASSWORD_BCRYPT);
                 if (!$password) throw new Exception('Failed to hash password');
             } else {
-                throw new InputException('Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
+                throw new InputException(FIELD_INVALID, 'Field `password` must be at least ' . PASSWORD_MIN_LENGTH . ' character(s) long.');
             }
         }
 
@@ -166,7 +166,7 @@ class MutationResolver
             'password' => $password ?? null,
         ];
         if (is_null($userUpdate['username']) && is_null($userUpdate['email']) && is_null($userUpdate['password']))
-            throw new InputException('At least one update field must not be null');
+            throw new InputException(FIELD_MISSING, 'At least one update field must not be null');
 
         return $userUpdate;
     }

@@ -86,7 +86,7 @@ class QueryResolver
             $issuer = 'localhost';
             return Token::create($user['id'], $secret, $expiration, $issuer);
         } else {
-            throw new AuthenticationException('Email or password is incorrect.');
+            throw new AuthenticationException(CREDENTIALS_INVALID, 'Email or password is incorrect.');
         }
     }
 }

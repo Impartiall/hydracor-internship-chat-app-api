@@ -55,10 +55,10 @@ class Authentication
         if (!$token) return null;
 
         if (!Token::validate($token, $this->secret))
-            throw new AuthenticationException('Invalid JWT.');
+            throw new AuthenticationException(JWT_INVALID, 'JWT is invalid.');
 
         if (!Token::validateExpiration($token, $this->secret))
-            throw new AuthenticationException('JWT is expired.');
+            throw new AuthenticationException(JWT_EXPIRED, 'JWT is expired.');
 
         $payload = Token::getPayload($token, $this->secret);
         return Records::selectById($this->connection, 'users', $payload['user_id']);

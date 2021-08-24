@@ -56,10 +56,10 @@ class Authorization
     {
         if (!call_user_func([$this, $callback], ...$args)) {
             if (is_null($this->getRequester())) {
-                throw new AuthorizationException('This action requires authorization but no author was found.');
+                throw new AuthorizationException(AUTHOR_MISSING, 'This action requires authorization but no author was found.');
             } else {
                 $username = $this->getRequester()['username'];
-                throw new AuthorizationException("User `$username` is not authorized for this action.");
+                throw new AuthorizationException(UNAUTHORIZED, "User `$username` is not authorized for this action.");
             }
         }
     }
