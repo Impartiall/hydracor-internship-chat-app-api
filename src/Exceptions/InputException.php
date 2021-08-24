@@ -9,8 +9,9 @@ use GraphQL\Error\ClientAware;
  */
 class InputException extends ClientSafeException
 {
-    public function getCategory(): string
+    public function __construct(...$args)
     {
-        return 'input';
+        parent::__construct(...$args);
+        $this->category = 'input';
     }
 }

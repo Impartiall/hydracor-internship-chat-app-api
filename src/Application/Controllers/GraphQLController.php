@@ -79,10 +79,10 @@ class GraphQLController
         // Use error code in error format
         $errorFormatter = function(Error $error) {
             $formattedError = FormattedError::createFromException($error);
-            $components = explode(ERROR_CODE_MESSAGE_SEPARATOR, $error->getMessage());
+            $components = explode(ERROR_CODE_CATEGORY_SEPARATOR, $error->getCategory());
             if (isset($components[1]) && $error->isClientSafe()) {
-                $formattedError['message'] = $components[1];
-                $formattedError['code'] = $components[0];
+                $formattedError['extensions']['category'] = $components[0];
+                $formattedError['code'] = $components[1];
             } else {
                 $formattedError['code'] = INTERNAL;
             }

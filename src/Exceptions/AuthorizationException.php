@@ -9,8 +9,9 @@ use GraphQL\Error\ClientAware;
  */
 class AuthorizationException extends ClientSafeException
 {
-    public function getCategory(): string
+    public function __construct(...$args)
     {
-        return 'authorization';
+        parent::__construct(...$args);
+        $this->category = 'authorization';
     }
 }
