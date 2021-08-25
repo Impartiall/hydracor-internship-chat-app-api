@@ -55,13 +55,23 @@ class Authorization
     public function assert(string $callback, array $args): void
     {
         if (!call_user_func([$this, $callback], ...$args)) {
-            if (is_null($this->getRequester())) {
+            if (!$this->isAuthorized()) {
                 throw new AuthorizationException(AUTHOR_MISSING, 'This action requires authorization but no author was found.');
             } else {
                 $username = $this->getRequester()['username'];
                 throw new AuthorizationException(UNAUTHORIZED, "User `$username` is not authorized for this action.");
             }
         }
+    }
+
+    /**
+     * Check whether a requester exists in this instance
+     * 
+     * @return bool True if the requester is not null, false otherwise
+     */
+    public function isAuthorized(): bool
+    {
+        return !is_null($this->getRequester());
     }
 
     /**
