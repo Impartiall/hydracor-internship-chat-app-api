@@ -15,6 +15,11 @@ type Mutation {
     createUser(input: UserInput!): String
     updateUser(id: ID!, input: UserInput!): User
     deleteUser(id: ID!): User
+
+    createServer(name: String!): Server
+    updateServerName(id: ID!, name: String!): Server
+    updateServerOwner(id: ID!, newOwnerId: ID!): Server
+    deleteServer(id: ID!): Server
 }
 
 type User {

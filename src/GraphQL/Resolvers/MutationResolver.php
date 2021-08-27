@@ -170,4 +170,94 @@ class MutationResolver
 
         return $userUpdate;
     }
+
+    /**
+     * Create a server with a given name
+     * 
+     * Requires that the requester is authenticated
+     * as an existing user. This user will be the owner
+     * of the new server.
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The updated server
+     */
+    public function createServer($_, array $args, array $context): array
+    {
+        $context['auth']->assert('isAuthorized', []);
+        $owner = $context['auth']->getRequester();
+
+        $server = [
+            'owner_id' => $owner['id'],
+            'name' => $context['validator']->validateServerName($args['name']),
+        ];
+
+        return Records::insert($context['db'], 'servers', $server);
+    }
+
+    /**
+     * Update a server's name by its ID
+     * 
+     * Requires that the requester is authorized
+     * to edit the server.
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The updated server
+     */
+    public function updateServerName($_, array $args, array $context): array
+    {
+        $context['auth']->assert('canEditServer', [$args['id']]);
+
+        $replacements = [
+            'name' => $context['validator']->validateServerName($args['name']),
+        ];
+
+        return Records::update($context['db'], 'servers', $args['id'], $replacements);
+    }
+
+    /**
+     * Update a server's owner by its ID
+     * 
+     * Requires that the requester is authorized
+     * to edit the server.
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The updated server
+     */
+    public function updateServerOwner($_, array $args, array $context): array
+    {
+        $context['auth']->assert('canEditServer', [$args['id']]);
+
+        // Ensure that the new owner user exists
+        $newOwner = Records::selectById($context['db'], 'users', $args['newOwnerId']);
+
+        $replacements = [
+            'owner' => $newOwner['id'],
+        ];
+
+        return Records::update($context['db'], 'servers', $args['id'], $replacements);
+    }
+
+    /**
+     * Delete a server by its ID
+     * 
+     * Requires that the requester is authorized
+     * to edit the server.
+     * 
+     * @param array $args The arguments passed to the field
+     * @param array $context The global context
+     * 
+     * @return array The deleted server
+     */
+    public function deleteServer($_, array $args, array $context): array
+    {
+        $context['auth']->assert('canEditServer', [$args['id']]);
+
+        return Records::delete($context['db'], 'servers', $args['id']);
+    }
 }
