@@ -6,6 +6,7 @@ use App\Application\Settings\SettingsInterface;
 use App\Auth\Authorization;
 use App\Auth\Authentication;
 use App\Exceptions\ClientSafeException;
+use App\Validation\Validator;
 use Doctrine\DBAL\Connection;
 use GraphQL\Executor\Executor;
 use GraphQL\GraphQL;
@@ -69,6 +70,7 @@ class GraphQLController
         $context = [
             'db'      => $this->db,
             'auth'    => new Authorization($user, $this->db),
+            'validator' => new Validator($this->db),
             'logger'  => $this->logger,
             'jwt' => $this->jwt,
         ];
