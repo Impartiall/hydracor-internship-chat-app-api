@@ -2,7 +2,9 @@
 
 namespace App\GraphQL\Resolvers;
 
+use App\Auth\Authorization;
 use App\Database\Records;
+use App\Exceptions\AuthorizationException;
 use App\Exceptions\ClientSafeException;
 use App\Exceptions\InputException;
 use Doctrine\DBAL\Connection;
@@ -101,7 +103,7 @@ class MutationResolver
             if (!$email) throw new InputException(FIELD_INVALID, 'Field `email` must be a valid email.');
 
             if (!Records::isUnique($connection, 'users', 'email', $email))
-                throw new InputException(EMAIL_TAKEN, "The email `$email` is taken.");
+                throw new InputException(NOT_UNIQUE, 'A user with that email already exists.');
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
@@ -149,7 +151,7 @@ class MutationResolver
             if (!$email) throw new InputException(FIELD_INVALID, 'Field `email` must be a valid email.');
 
             if (!Records::isUnique($connection, 'users', 'email', $email))
-                throw new InputException(EMAIL_TAKEN, "The email `$email` is taken.");
+                throw new InputException(NOT_UNIQUE, 'A user with that email already exists.');
         }
         if (isset($userInput['password'])) {
             if (strlen($userInput['password']) >= PASSWORD_MIN_LENGTH) {
